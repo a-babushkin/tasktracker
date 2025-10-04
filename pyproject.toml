@@ -1,15 +1,31 @@
 [project]
 name = "tasktracker"
 version = "0.1.0"
-description = ""
+description = "Дипломный проект - Трекер задач сотрудников"
 authors = [
     {name = "a-babushkin",email = "a.babushkin42@gmail.com"}
 ]
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "django (>=5.2.7,<6.0.0)",
+    "djangorestframework (>=3.16.1,<4.0.0)",
+    "dotenv (>=0.9.9,<0.10.0)",
+    "psycopg2-binary (>=2.9.10,<3.0.0)",
+    "drf-yasg (>=1.21.11,<2.0.0)"
 ]
 
+[tool.poetry.group.lint.dependencies]
+black = "^25.1.0"
+flake8 = "^7.3.0"
+isort = "^6.0.1"
+
+[tool.black]
+line-length = 119
+exclude = '.git'
+
+[tool.isort]
+line_length = 119
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
