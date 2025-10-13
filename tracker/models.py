@@ -1,12 +1,12 @@
 from django.db import models
-from django.utils.text import slugify
-from transliterate import translit
+from transliterate import slugify, translit
 
 from users.models import User
 
 
 class Project(models.Model):
     """Описание модели Проекта"""
+
     title = models.CharField(verbose_name="Название", max_length=255)
     description = models.TextField(verbose_name="Описание", blank=True)
     start_date = models.DateTimeField(verbose_name="Создан", auto_now_add=True)
@@ -24,6 +24,7 @@ class Project(models.Model):
 
 class Priority(models.Model):
     """Описание модели Приоритета"""
+
     title = models.CharField(verbose_name="Название", max_length=20, unique=True)
     slug = models.SlugField(verbose_name="Slug", max_length=20, unique=True, blank=True)
 
@@ -43,6 +44,7 @@ class Priority(models.Model):
 
 class Status(models.Model):
     """Описание модели Статуса"""
+
     title = models.CharField(verbose_name="Название", max_length=20, unique=True)
     slug = models.SlugField(verbose_name="Slug", max_length=20, unique=True, blank=True, null=True)
 
@@ -62,6 +64,7 @@ class Status(models.Model):
 
 class Task(models.Model):
     """Описание модели Задачи"""
+
     title = models.CharField(verbose_name="Название", max_length=200)
     description = models.TextField(verbose_name="Описание", blank=True)
     start_date = models.DateTimeField(verbose_name="Создана", auto_now_add=True)
@@ -92,6 +95,7 @@ class Task(models.Model):
 
 class Comment(models.Model):
     """Описание модели Комментария"""
+
     text = models.TextField(
         verbose_name="Текст комментария",
     )

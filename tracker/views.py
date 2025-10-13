@@ -1,8 +1,10 @@
 from django.db.models import Count, Prefetch, Q
-from rest_framework import viewsets
+from django.utils.text import slugify
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from transliterate import translit
 
 from tracker.models import Comment, Priority, Project, Status, Task
 from tracker.paginations import CustomPagination
@@ -92,6 +94,7 @@ def important_tasks(request):
 
 class ProjectViewSet(viewsets.ModelViewSet):
     """Контроллер для работы с проектами"""
+
     queryset = Project.objects.all()
     serializer_class = ProjectSerializer
     swagger_tags = ["Projects"]
@@ -99,22 +102,45 @@ class ProjectViewSet(viewsets.ModelViewSet):
 
 class PriorityViewSet(viewsets.ModelViewSet):
     """Контроллер для работы с приоритетами"""
+
     queryset = Priority.objects.all()
     serializer_class = PrioritySerializer
     permission_classes = (IsAuthenticated, IsStaff)
     swagger_tags = ["Priorities"]
 
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        title = data.get("title", "")
+        if not data.get("slug") and title:
+            data["slug"] = slugify(translit(title, "ru", reversed=True))
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class StatusViewSet(viewsets.ModelViewSet):
     """Контроллер для работы со статусами"""
+
     queryset = Status.objects.all()
     serializer_class = StatusSerializer
     permission_classes = (IsAuthenticated, IsStaff)
     swagger_tags = ["Statuses"]
 
+    def create(self, request, *args, **kwargs):
+        data = request.data.copy()
+        title = data.get("title", "")
+        if not data.get("slug") and title:
+            data["slug"] = slugify(translit(title, "ru", reversed=True))
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     """Контроллер для работы с комментариями"""
+
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     swagger_tags = ["Comments"]
@@ -122,6 +148,7 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class TaskViewSet(viewsets.ModelViewSet):
     """Контроллер для работы с задачами"""
+
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     pagination_class = CustomPagination

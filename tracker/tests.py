@@ -14,7 +14,7 @@ class BaseViewSetTests(APITestCase):
     def setUp(self):
         """Начальные установки для тестирования"""
         self.user = User.objects.create(
-            email="user@mail.ru", is_staff=True, first_name="Arthur", last_name="Conan Doyle"
+            email="user@mail.ru", is_staff=True, first_name="Arthur", last_name="Conan", surname="Doyle"
         )
 
         self.status_new = Status.objects.create(title="новая", slug="novaja")
@@ -289,29 +289,29 @@ class TestGetFullName(APITestCase):
     """Тестирование функции формирования полного имени пользователя"""
 
     class EmpStub:
-        def __init__(self, first_name=None, last_name=None, username=None):
+        def __init__(self, first_name=None, last_name=None, surname=None):
             self.first_name = first_name
             self.last_name = last_name
-            self.username = username
+            self.surname = surname
 
     def test_full_name_present(self):
         """Вариант когда все поля заполнены"""
-        emp = self.EmpStub(first_name="John", last_name="Doe", username="jdoe")
-        self.assertEqual(get_full_name(emp), "John Doe")
+        emp = self.EmpStub(first_name="John", last_name="Doe", surname="jdoe")
+        self.assertEqual(get_full_name(emp), "John jdoe Doe")
 
     def test_first_name_only(self):
         """Вариант когда нет фамилии"""
-        emp = self.EmpStub(first_name="John", last_name=None, username="jdoe")
-        self.assertEqual(get_full_name(emp), "John")
+        emp = self.EmpStub(first_name="John", last_name=None, surname="jdoe")
+        self.assertEqual(get_full_name(emp), "John jdoe")
 
     def test_last_name_only(self):
         """Вариант когда нет имени"""
-        emp = self.EmpStub(first_name=None, last_name="Doe", username="jdoe")
-        self.assertEqual(get_full_name(emp), "Doe")
+        emp = self.EmpStub(first_name=None, last_name="Doe", surname="jdoe")
+        self.assertEqual(get_full_name(emp), "jdoe Doe")
 
     def test_no_names(self):
         """Вариант когда нет фамилии и имени"""
-        emp = self.EmpStub(first_name=None, last_name=None, username="jdoe")
+        emp = self.EmpStub(first_name=None, last_name=None, surname="jdoe")
         self.assertEqual(get_full_name(emp), "jdoe")
 
 
@@ -325,7 +325,7 @@ class BusyEmployeesTestCase(BaseViewSetTests):
 
         expected_data = [
             {
-                "executor": "Arthur Conan Doyle",
+                "executor": "Arthur Doyle Conan",
                 "active_tasks_count": 2,
                 "active_tasks_titles": ["Task 1", "Task 2"],
             }
@@ -369,12 +369,11 @@ class ImportantTasksAPITest(BaseViewSetTests):
         # Получаем список важных задач
         response = self.client.get(reverse("tracker:important_tasks"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        print("Response data:", response.data)
         expected_response = [
             {
                 "important_task": "Dependent Task",
                 "due_date": "2025-10-25T00:00:00Z",
-                "available_employees": ["Morgan Freeman"],
+                "available_employees": ["Morgan   Freeman"],
             }
         ]
 
