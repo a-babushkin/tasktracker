@@ -4,12 +4,13 @@ from rest_framework.routers import SimpleRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 from users.apps import UsersConfig
-from users.views import UserCreateApiView, UserDestroyApiView, UserRetrieveApiView, UsersListApiView, UserUpdateApiView
+from users.views import UserCreateApiView, UserDestroyApiView, UserRetrieveApiView, UsersListApiView, UserUpdateApiView, \
+    PositionViewSet
 
 app_name = UsersConfig.name
 
 router = SimpleRouter()
-
+router.register(r"positions", PositionViewSet)
 urlpatterns = [
     path("", UsersListApiView.as_view(), name="user_list"),
     path("<int:pk>/", UserRetrieveApiView.as_view(), name="user_retrieve"),
