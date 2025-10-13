@@ -1,6 +1,5 @@
 from django.db import models
-from django.utils.text import slugify
-from transliterate import translit
+from transliterate import translit, slugify
 
 from users.models import User
 
