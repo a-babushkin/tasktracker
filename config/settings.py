@@ -49,7 +49,7 @@ SIMPLE_JWT = {
 }
 
 SWAGGER_SETTINGS = {
-    'DEFAULT_AUTO_SCHEMA_CLASS': 'tracker.swagger.CustomSwaggerAutoSchema',
+    "DEFAULT_AUTO_SCHEMA_CLASS": "tracker.swagger.CustomSwaggerAutoSchema",
 }
 
 MIDDLEWARE = [
@@ -116,7 +116,7 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = "static/"
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
