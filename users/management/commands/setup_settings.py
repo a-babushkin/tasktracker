@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group
 from django.core.management import BaseCommand
 
-from tracker.models import Status, Priority
+from tracker.models import Priority, Status
 from users.models import User
 
 
@@ -14,11 +14,9 @@ class Command(BaseCommand):
         admins, created = Group.objects.get_or_create(name="Администраторы")
 
         # Создаем суперпользователя, если он еще не существует
-        user, created = User.objects.get_or_create(email="admin@mail.ru", defaults={
-            'is_active': True,
-            'is_staff': True,
-            'is_superuser': True
-        })
+        user, created = User.objects.get_or_create(
+            email="admin@mail.ru", defaults={"is_active": True, "is_staff": True, "is_superuser": True}
+        )
         if created:
             user.set_password("12345")
             user.save()
@@ -29,7 +27,7 @@ class Command(BaseCommand):
             ("новая", "novaja"),
             ("в работе", "v-rabote"),
             ("Завершена", "zavershena"),
-            ]
+        ]
 
         for title, slug in status_titles:
             status, created = Status.objects.get_or_create(title=title, slug=slug)

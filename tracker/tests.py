@@ -1,5 +1,3 @@
-
-
 from django.urls import reverse
 from django.utils import timezone
 from pytz import UTC
@@ -7,7 +5,7 @@ from rest_framework import status
 from rest_framework.test import APIClient, APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
 
-from tracker.models import Project, Priority, Status, Task, Comment
+from tracker.models import Comment, Priority, Project, Status, Task
 from tracker.services import get_full_name
 from users.models import User
 
@@ -15,8 +13,9 @@ from users.models import User
 class BaseViewSetTests(APITestCase):
     def setUp(self):
         """Начальные установки для тестирования"""
-        self.user = User.objects.create(email="user@mail.ru", is_staff=True, first_name="Arthur",
-                                        last_name="Conan Doyle")
+        self.user = User.objects.create(
+            email="user@mail.ru", is_staff=True, first_name="Arthur", last_name="Conan Doyle"
+        )
 
         self.status_new = Status.objects.create(title="новая", slug="novaja")
         self.status_work = Status.objects.create(title="в работе", slug="v-rabote")
@@ -24,12 +23,27 @@ class BaseViewSetTests(APITestCase):
         self.priority_average = Priority.objects.create(title="средний", slug="sredniy")
         self.project1 = Project.objects.create(title="Project 1")
 
-        self.task1 = Task.objects.create(title="Task 1", status=self.status_work, priority=self.priority_average,
-                                         project=self.project1, executor=self.user)
-        self.task2 = Task.objects.create(title="Task 2", status=self.status_work, priority=self.priority_average,
-                                         project=self.project1, executor=self.user)
-        self.task3 = Task.objects.create(title="Task 3", status=self.status_new, priority=self.priority_average,
-                                         project=self.project1, executor=self.user)
+        self.task1 = Task.objects.create(
+            title="Task 1",
+            status=self.status_work,
+            priority=self.priority_average,
+            project=self.project1,
+            executor=self.user,
+        )
+        self.task2 = Task.objects.create(
+            title="Task 2",
+            status=self.status_work,
+            priority=self.priority_average,
+            project=self.project1,
+            executor=self.user,
+        )
+        self.task3 = Task.objects.create(
+            title="Task 3",
+            status=self.status_new,
+            priority=self.priority_average,
+            project=self.project1,
+            executor=self.user,
+        )
 
         self.comment1 = Comment.objects.create(text="Comment 1", user=self.user, task=self.task1)
 
@@ -48,9 +62,7 @@ class PriorityViewSetTests(BaseViewSetTests):
 
     def test_create_priority(self):
         """Тестирование создания приоритета"""
-        data = {
-            "title": "New Priority"
-        }
+        data = {"title": "New Priority"}
         response = self.client.post("/tracker/priorities/", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Priority.objects.count(), 3)
@@ -58,9 +70,7 @@ class PriorityViewSetTests(BaseViewSetTests):
 
     def test_update_priority(self):
         """Тестирование обновления приоритета"""
-        data = {
-            "title": "Updated Priority"
-        }
+        data = {"title": "Updated Priority"}
         response = self.client.put(f"/tracker/priorities/{self.priority_average.id}/", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.priority_average.refresh_from_db()
@@ -97,9 +107,7 @@ class StatusViewSetTests(BaseViewSetTests):
 
     def test_create_status(self):
         """Тестирование создания статуса"""
-        data = {
-            "title": "New Status"
-        }
+        data = {"title": "New Status"}
         response = self.client.post("/tracker/statuses/", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Status.objects.count(), 3)
@@ -107,9 +115,7 @@ class StatusViewSetTests(BaseViewSetTests):
 
     def test_update_status(self):
         """Тестирование обновления статуса"""
-        data = {
-            "title": "Updated Status"
-        }
+        data = {"title": "Updated Status"}
         response = self.client.put(f"/tracker/statuses/{self.status_new.id}/", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.status_new.refresh_from_db()
@@ -191,11 +197,7 @@ class CommentViewSetTests(BaseViewSetTests):
 
     def test_create_comment(self):
         """Тестирование создания комментария"""
-        data = {
-            "text": "New Comment",
-            "user": self.user.id,
-            "task": self.task1.id
-        }
+        data = {"text": "New Comment", "user": self.user.id, "task": self.task1.id}
         response = self.client.post("/tracker/comments/", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Comment.objects.count(), 2)
@@ -203,11 +205,7 @@ class CommentViewSetTests(BaseViewSetTests):
 
     def test_update_comment(self):
         """Тестирование обновления комментария"""
-        data = {
-            "text": "Updated Comment",
-            "user": self.user.id,
-            "task": self.task1.id
-        }
+        data = {"text": "Updated Comment", "user": self.user.id, "task": self.task1.id}
         response = self.client.put(f"/tracker/comments/{self.comment1.id}/", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.comment1.refresh_from_db()
@@ -247,7 +245,7 @@ class TaskViewSetTests(BaseViewSetTests):
             "title": "New Task",
             "status": self.status_new.id,
             "priority": self.priority_average.id,
-            "project": self.project1.id
+            "project": self.project1.id,
         }
         response = self.client.post("/tracker/tasks/", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -260,7 +258,7 @@ class TaskViewSetTests(BaseViewSetTests):
             "title": "Updated Task",
             "status": self.status_new.id,
             "priority": self.priority_average.id,
-            "project": self.project1.id
+            "project": self.project1.id,
         }
         response = self.client.put(f"/tracker/tasks/{self.task1.id}/", data, format="json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -297,18 +295,22 @@ class TestGetFullName(APITestCase):
             self.username = username
 
     def test_full_name_present(self):
+        """Вариант когда все поля заполнены"""
         emp = self.EmpStub(first_name="John", last_name="Doe", username="jdoe")
         self.assertEqual(get_full_name(emp), "John Doe")
 
     def test_first_name_only(self):
+        """Вариант когда нет фамилии"""
         emp = self.EmpStub(first_name="John", last_name=None, username="jdoe")
         self.assertEqual(get_full_name(emp), "John")
 
     def test_last_name_only(self):
+        """Вариант когда нет имени"""
         emp = self.EmpStub(first_name=None, last_name="Doe", username="jdoe")
         self.assertEqual(get_full_name(emp), "Doe")
 
     def test_no_names(self):
+        """Вариант когда нет фамилии и имени"""
         emp = self.EmpStub(first_name=None, last_name=None, username="jdoe")
         self.assertEqual(get_full_name(emp), "jdoe")
 
@@ -316,20 +318,24 @@ class TestGetFullName(APITestCase):
 class BusyEmployeesTestCase(BaseViewSetTests):
 
     def test_busy_employees(self):
-        url = reverse('tracker:busy_employees')
+        """Тест для проверки ответа функции busy_employees"""
+        url = reverse("tracker:busy_employees")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        expected_data = [{
-            'executor': 'Arthur Conan Doyle',
-            'active_tasks_count': 2,
-            'active_tasks_titles': ['Task 1', 'Task 2'],
-        }]
+        expected_data = [
+            {
+                "executor": "Arthur Conan Doyle",
+                "active_tasks_count": 2,
+                "active_tasks_titles": ["Task 1", "Task 2"],
+            }
+        ]
 
         self.assertEqual(response.json(), expected_data)
 
 
 class ImportantTasksAPITest(BaseViewSetTests):
+
     def setUp(self):
         super().setUp()
         # Создание родительских задач
@@ -337,8 +343,9 @@ class ImportantTasksAPITest(BaseViewSetTests):
             title="Parent Task",
             due_date=timezone.datetime(2025, 10, 20, tzinfo=UTC),
             executor=self.user,
-            status=self.status_work, project=self.project1,
-            priority=self.priority_average
+            status=self.status_work,
+            project=self.project1,
+            priority=self.priority_average,
         )
 
         # Создание зависимой задачи
@@ -346,25 +353,30 @@ class ImportantTasksAPITest(BaseViewSetTests):
             title="Dependent Task",
             due_date=timezone.datetime(2025, 10, 25, tzinfo=UTC),
             executor=self.user,
-            parent_task=self.parent_task, status=self.status_new,
-            project=self.project1, priority=self.priority_average
+            parent_task=self.parent_task,
+            status=self.status_new,
+            project=self.project1,
+            priority=self.priority_average,
         )
 
-        self.user2 = User.objects.create(email="user2@mail.ru", is_staff=True, first_name="Morgan",
-                                         last_name="Freeman")
+        self.user2 = User.objects.create(
+            email="user2@mail.ru", is_staff=True, first_name="Morgan", last_name="Freeman"
+        )
 
     def test_important_tasks(self):
         """Тест для проверки ответа функции important_tasks"""
 
         # Получаем список важных задач
-        response = self.client.get(reverse('tracker:important_tasks'))
+        response = self.client.get(reverse("tracker:important_tasks"))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         print("Response data:", response.data)
-        expected_response = [{
-            'important_task': 'Dependent Task',
-            'due_date': '2025-10-25T00:00:00Z',
-            'available_employees': ['Morgan Freeman']
-        }]
+        expected_response = [
+            {
+                "important_task": "Dependent Task",
+                "due_date": "2025-10-25T00:00:00Z",
+                "available_employees": ["Morgan Freeman"],
+            }
+        ]
 
         # Проверка, что ответ соответствует ожиданиям
         self.assertEqual(response.json(), expected_response)
