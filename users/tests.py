@@ -1,8 +1,8 @@
 from rest_framework import status
-from rest_framework.test import APITestCase, APIClient
+from rest_framework.test import APIClient, APITestCase
 from rest_framework_simplejwt.tokens import AccessToken
 
-from users.models import User, Position
+from users.models import Position, User
 
 
 class BaseUsersApiTests(APITestCase):
@@ -25,14 +25,14 @@ class BaseUsersApiTests(APITestCase):
             password="password123",
             is_staff=True,
             is_superuser=True,
-            position=self.position2
+            position=self.position2,
         )
         self.normal_user = User.objects.create(
             email="user@example.com",
             last_name="Kravets",
             first_name="Leny",
             password="password123",
-            position=self.position2
+            position=self.position2,
         )
         self.access_token = str(AccessToken.for_user(self.user))
         self.client = APIClient()
@@ -106,7 +106,7 @@ class UserApiTests(BaseUsersApiTests):
         response = self.client.get("/users/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["results"][0]["email"], "admin@example.com")
-        self.assertEqual(str(self.admin_user), 'admin@example.com Demy   Moor - Администратор')
+        self.assertEqual(str(self.admin_user), "admin@example.com Demy   Moor - Администратор")
 
     def test_user_update(self):
         """Тест на обновление пользователя"""

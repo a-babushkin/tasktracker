@@ -1,12 +1,13 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from transliterate import translit, slugify
+from transliterate import slugify, translit
 
 from tracker.services import get_full_name
 
 
 class Position(models.Model):
     """Модель Должности"""
+
     title = models.CharField(verbose_name="Должность", max_length=100, unique=True)
     slug = models.SlugField(verbose_name="Slug", max_length=100, unique=True, blank=True)
 
@@ -26,6 +27,7 @@ class Position(models.Model):
 
 class User(AbstractUser):
     """Модель сотрудника"""
+
     username = None
     surname = models.CharField(
         verbose_name="Отчество",
@@ -34,18 +36,9 @@ class User(AbstractUser):
         null=True,
         help_text="Введите отчество",
     )
-    email = models.EmailField(
-        verbose_name="E-mail",
-        unique=True,
-        help_text="Введите электронную почту"
-    )
+    email = models.EmailField(verbose_name="E-mail", unique=True, help_text="Введите электронную почту")
     position = models.ForeignKey(
-        Position,
-        verbose_name="Должность",
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='users'
+        Position, verbose_name="Должность", on_delete=models.SET_NULL, null=True, blank=True, related_name="users"
     )
     avatar = models.ImageField(
         verbose_name="Аватар",

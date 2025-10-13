@@ -1,17 +1,18 @@
 from django.utils.text import slugify
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.generics import CreateAPIView, DestroyAPIView, ListAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.permissions import AllowAny, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from transliterate import translit
 
-from users.models import User, Position
+from users.models import Position, User
 from users.permissions import IsOwner, IsStaff
-from users.serializer import UserSerializer, PositionSerializer
+from users.serializer import PositionSerializer, UserSerializer
 
 
 class PositionViewSet(viewsets.ModelViewSet):
     """Контроллер для работы со статусами"""
+
     queryset = Position.objects.all()
     serializer_class = PositionSerializer
     permission_classes = (IsAuthenticated, IsStaff)
@@ -19,13 +20,14 @@ class PositionViewSet(viewsets.ModelViewSet):
 
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
-        title = data.get('title', '')
-        if not data.get('slug') and title:
-            data['slug'] = slugify(translit(title, "ru", reversed=True))
+        title = data.get("title", "")
+        if not data.get("slug") and title:
+            data["slug"] = slugify(translit(title, "ru", reversed=True))
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class UserCreateApiView(CreateAPIView):
     """Контроллер для создания (регистрации) нового пользователя"""

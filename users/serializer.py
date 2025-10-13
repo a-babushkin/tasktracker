@@ -1,7 +1,7 @@
+from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
-from rest_framework import serializers
-from users.models import User, Position
+from users.models import Position, User
 
 
 class UserSerializer(ModelSerializer):

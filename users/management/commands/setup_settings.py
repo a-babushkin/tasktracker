@@ -1,8 +1,8 @@
 from django.contrib.auth.models import Group
 from django.core.management import BaseCommand
 
-from tracker.models import Priority, Status, Project, Task, Comment
-from users.models import User, Position
+from tracker.models import Comment, Priority, Project, Status, Task
+from users.models import Position, User
 
 
 class Command(BaseCommand):
@@ -46,8 +46,14 @@ class Command(BaseCommand):
         # Создаем суперпользователя, если он еще не существует
         user, created = User.objects.get_or_create(
             email="admin@mail.ru",
-            defaults={"last_name": "Бабушкин", "first_name": "Андрей", "is_active": True, "is_staff": True,
-                      "is_superuser": True, "position_id": 1}
+            defaults={
+                "last_name": "Бабушкин",
+                "first_name": "Андрей",
+                "is_active": True,
+                "is_staff": True,
+                "is_superuser": True,
+                "position_id": 1,
+            },
         )
         if created:
             user.set_password("12345")
@@ -56,8 +62,13 @@ class Command(BaseCommand):
 
         user, created = User.objects.get_or_create(
             email="user@mail.ru",
-            defaults={"last_name": "Филенков", "first_name": "Василий", "is_active": True, "is_staff": True,
-                      "position_id": 3}
+            defaults={
+                "last_name": "Филенков",
+                "first_name": "Василий",
+                "is_active": True,
+                "is_staff": True,
+                "position_id": 3,
+            },
         )
         if created:
             user.set_password("12345")
@@ -113,7 +124,7 @@ class Command(BaseCommand):
             parent_task.save()
 
         # Создание зависимой задачи
-        dependent_task, created  = Task.objects.get_or_create(
+        dependent_task, created = Task.objects.get_or_create(
             title="Dependent Task",
             status=status,
             priority=priority,
